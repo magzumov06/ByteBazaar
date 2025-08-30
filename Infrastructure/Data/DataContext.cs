@@ -25,7 +25,6 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
             .WithMany(u=> u.Orders)
             .HasForeignKey(o => o.UserId);
         
-        
         modelBuilder.Entity<CartItem>()
             .HasOne(c=>c.User)
             .WithMany(u=> u.CartItems)
@@ -55,7 +54,12 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
             .HasOne(oi=>oi.Order)
             .WithMany(o=>o.OrderItems)
             .HasForeignKey(oi=>oi.OrderId);
-            
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email ).IsUnique();
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.PhoneNumber ).IsUnique();
+
     }
     
 }

@@ -18,4 +18,5 @@ public class Product:BaseEntities
     public List<Review>? Reviews { get; set; }
     public List<OrderItem>? OrderItems { get; set; }
     public List<CartItem>? CartItems { get; set; }
+    public Category? Category { get; set; }
 }

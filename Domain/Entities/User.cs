@@ -22,4 +22,5 @@ public class User:BaseEntities
     public string? AvatarUrl { get; set; }
     public List<Review>? Reviews {get;set;}
     public List<CartItem>? CartItems { get; set; }
+    public List<Order>? Orders { get; set; }
 }

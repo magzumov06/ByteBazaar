@@ -20,6 +20,11 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
             .WithMany(r => r.Reviews)
             .HasForeignKey(r => r.UserId);
         
+        modelBuilder.Entity<Order>()
+            .HasOne(o=> o.User)
+            .WithMany(u=> u.Orders)
+            .HasForeignKey(o => o.UserId);
+        
         
         modelBuilder.Entity<CartItem>()
             .HasOne(c=>c.User)
@@ -40,11 +45,16 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
             .HasOne(c=>c.Product)
             .WithMany(p=>p.CartItems)
             .HasForeignKey(c=>c.ProductId);
+        
+        modelBuilder.Entity<Product>()
+            .HasOne(p=> p.Category)
+            .WithMany(c=> c.Products)
+            .HasForeignKey(p=>p.CategoryId);
             
         modelBuilder.Entity<OrderItem>()
-            .HasOne(o=>o.Order)
+            .HasOne(oi=>oi.Order)
             .WithMany(o=>o.OrderItems)
-            .HasForeignKey(o=>o.OrderId);
+            .HasForeignKey(oi=>oi.OrderId);
             
     }
     

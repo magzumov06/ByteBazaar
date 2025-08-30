@@ -13,5 +13,5 @@ public class Order:BaseEntities
     [Required]
     public required string Address{get;set;}
     public PaymentMethod PaymentMethod {get;set;}
-    public List<OrderItem> OrderItems { get; set; }
+    public List<OrderItem>? OrderItems { get; set; }
 }

@@ -23,22 +23,22 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
         
         modelBuilder.Entity<CartItem>()
             .HasOne(c=>c.User)
-            .WithMany(c=> c.CartItems)
+            .WithMany(u=> u.CartItems)
             .HasForeignKey(c=>c.UserId);
         
         modelBuilder.Entity<Review>()
             .HasOne(r=>r.Product)
-            .WithMany(r=> r.Reviews)
+            .WithMany(p=> p.Reviews)
             .HasForeignKey(r=>r.ProductId);
         
         modelBuilder.Entity<OrderItem>()
             .HasOne(o=> o.Product)
-            .WithMany(o=> o.OrderItems)
+            .WithMany(p=> p.OrderItems)
             .HasForeignKey(o=>o.ProductId);
         
         modelBuilder.Entity<CartItem>()
             .HasOne(c=>c.Product)
-            .WithMany(c=>c.CartItems)
+            .WithMany(p=>p.CartItems)
             .HasForeignKey(c=>c.ProductId);
             
         modelBuilder.Entity<OrderItem>()

@@ -20,6 +20,6 @@ public class User:BaseEntities
     public required string PhoneNumber { get; set; }
     public Role Role { get; set; }
     public string? AvatarUrl { get; set; }
-    public List<Review> Reviews {get;set;}
-    public List<CartItem> CartItems { get; set; }
+    public List<Review>? Reviews {get;set;}
+    public List<CartItem>? CartItems { get; set; }
 }

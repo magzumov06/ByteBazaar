@@ -15,7 +15,7 @@ public class Product:BaseEntities
     public string? ImageUrl { get; set; }
     public decimal AverageRating { get; set; }
     public int RatingCount { get; set; }
-    public List<Review> Reviews { get; set; }
-    public List<OrderItem> OrderItems { get; set; }
-    public List<CartItem> CartItems { get; set; }
+    public List<Review>? Reviews { get; set; }
+    public List<OrderItem>? OrderItems { get; set; }
+    public List<CartItem>? CartItems { get; set; }
 }

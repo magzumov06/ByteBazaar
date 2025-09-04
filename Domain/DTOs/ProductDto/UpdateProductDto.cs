@@ -12,7 +12,5 @@ public class UpdateProductDto
     public int Quantity { get; set; }
     public int CategoryId { get; set; }
     public string? ImageUrl { get; set; }
-    public decimal AverageRating { get; set; }
-    public int RatingCount { get; set; }
     public bool IsDeleted { get; set; }
 }

@@ -23,7 +23,7 @@ public class DataContext(DbContextOptions<DataContext> options) :  DbContext(opt
         modelBuilder.Entity<Order>()
             .HasOne(o=> o.User)
             .WithMany(u=> u.Orders)
-            .HasForeignKey(o => o.UserId);
+            .HasForeignKey(o => o.UserID);
         
         modelBuilder.Entity<CartItem>()
             .HasOne(c=>c.User)

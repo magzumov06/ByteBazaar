@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;
 
-public class User:BaseEntities
+public class User : IdentityUser<int>
 {
     public Guid Id { get; set; }
     [Required]
@@ -11,15 +12,20 @@ public class User:BaseEntities
     public required string FullName { get; set; }
     [Range(13,100, ErrorMessage = "Age must be between 13 and 100")]
     public int Age { get; set; }
+    [StringLength(150)]
+    public string? Address { get; set; }
     [EmailAddress]
     public required string Email { get; set; }
-    [MinLength(6, ErrorMessage = "Password minimum length is 6")]
-    public required string PasswordHash { get; set; }
     [Phone]
     [StringLength(13 , MinimumLength = 9 , ErrorMessage = "Phone length must be between 9 and 13")]
     public required string PhoneNumber { get; set; }
     public Role Role { get; set; }
     public string? AvatarUrl { get; set; }
+    public string? Code { get; set; }
+    public DateTime CodeDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; }
     public List<Review>? Reviews {get;set;}
     public List<CartItem>? CartItems { get; set; }
     public List<Order>? Orders { get; set; }

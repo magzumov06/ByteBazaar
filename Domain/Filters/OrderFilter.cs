@@ -2,9 +2,10 @@
 
 namespace Domain.Filters;
 
-public class OrderFilter
+public class OrderFilter:BaseFilter
 {
-    public int? UserId{get;set;}
+    public int? Id { get; set; }
+    public int? UserID{get;set;}
     public DateTime? OrderDate{get;set;}
     public decimal? TotalAmount{get;set;}
     public Status? Status{get;set;}

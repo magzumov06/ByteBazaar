@@ -1,9 +1,21 @@
-﻿using Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using Domain.Entities;
+using Domain.Enums;
 
 namespace Domain.DTOs.UserDto;
 
 public class GetUserDto:BaseEntities
 {
+    public Guid Id { get; set; }
+    public string FullName { get; set; }
+    public int Age { get; set; }
+    public string Address { get; set; }
+    public string Email { get; set; }
+    [Phone] 
+    public string PhoneNumber { get; set; }
+    public Role Role { get; set; }
+    public string AvatarUrl { get; set; }
+    public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

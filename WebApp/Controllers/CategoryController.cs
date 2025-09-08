@@ -9,7 +9,7 @@ namespace WebApp.Controllers;
 public class CategoryController(ICategoryService  service):ControllerBase
 {
     [HttpPost]
-    
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateCategory(CreateCategoryDto category)
     {
         var  res = await service.CreateCategory(category);

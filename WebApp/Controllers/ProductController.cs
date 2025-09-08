@@ -11,7 +11,7 @@ namespace WebApp.Controllers;
 public class ProductController(IProductService service):ControllerBase
 {
     [HttpPost]
-    
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateProduct(CreateProductDto product)
     {
         var res = await service.CreateProduct(product);

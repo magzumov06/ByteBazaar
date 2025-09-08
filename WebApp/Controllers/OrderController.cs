@@ -20,6 +20,7 @@ public class OrderController(IOrderService service): Controller
     }
     
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateOrder(UpdateOrderDto dto)
     {
         var res = await service.UpdateStatusOrder(dto);
@@ -27,6 +28,7 @@ public class OrderController(IOrderService service): Controller
     }
     
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetOrders([FromQuery]OrderFilter filter)
     {
         var res =  await service.GetOrders(filter);

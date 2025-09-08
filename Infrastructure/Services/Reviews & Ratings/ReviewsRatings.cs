@@ -17,10 +17,10 @@ public class ReviewsRatings(DataContext context):IReviewsRatings
         {
             var isBuy =  context.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.UserID == dto.UserId && o.Status == Status.Delivered
+                .AnyAsync(o => o.UserID == dto.UserId && o.Status == Status.Delivered
                                                       && o.OrderItems.Any(oi => oi.ProductId == dto.ProductId)
                 );
-            if (isBuy == null)
+            if (isBuy != null)
             {
                 return new Responce<string>(HttpStatusCode.BadRequest,
                     "Шумо ин маҳсулотро ҳоло нахаридаед.Аз ин сабаб шарҳ гузошта наметавонед!");

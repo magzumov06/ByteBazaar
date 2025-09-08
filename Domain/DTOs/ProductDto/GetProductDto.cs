@@ -9,5 +9,4 @@ public class GetProductDto:UpdateProductDto
     public DateTime UpdatedAt { get; set; }
     public decimal AverageRating { get; set; }
     public int RatingCount { get; set; }
-    public List<GetReviewDto>? Reviews { get; set; }
 }

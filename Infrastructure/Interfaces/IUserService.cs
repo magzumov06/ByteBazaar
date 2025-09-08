@@ -5,8 +5,7 @@ using Infrastructure.Responces;
 
 namespace Infrastructure.Interfaces;
 
-public interface IuserService
+public interface IUserService
 {
-    Task<Responce<string>> CreateUser(CreateUserDto dto);
     Task<PaginationResponce<List<GetUserDto>>> GetUsers(UserFilter filter);
 }

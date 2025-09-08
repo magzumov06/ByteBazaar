@@ -88,8 +88,6 @@ public class ProductService(DataContext context): IProductService
         try
         {
             var product = await context.Products
-                .Include(x=>x.Category)
-                .Include(x => x.Reviews)
                 .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false );
             if (product == null) return new Responce<GetProductDto>(HttpStatusCode.NotFound,"Product not found");
             var dto = new GetProductDto()
@@ -105,6 +103,7 @@ public class ProductService(DataContext context): IProductService
                 UpdatedAt = product.UpdatedAt,
                 CreatedAt = product.CreatedAt
             };
+            
             return new Responce<GetProductDto>(dto);
         }
         catch (Exception e)

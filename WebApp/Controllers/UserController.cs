@@ -8,15 +8,8 @@ namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(IuserService service) :Controller
+public class UserController(IUserService service) :Controller
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserDto dto)
-    {
-        var res =  await service.CreateUser(dto);
-        return Ok(res);
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery] UserFilter filter)
     {

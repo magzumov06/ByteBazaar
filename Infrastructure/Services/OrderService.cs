@@ -6,15 +6,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
-public class OrderService(DataContext context): IOrderService
+public class OrderService(DataContext context, ILogger<OrderService> logger): IOrderService
 {
     public async Task<Responce<string>> CreateOrder(CreateOrderDto create)
     {
         try
         {
+            logger.LogInformation("Creating order");
             var cartItem =  context.CartItems
                 .Include(c => c.Product)
                 .Where(c => c.UserId == create.UserID);
@@ -44,6 +46,7 @@ public class OrderService(DataContext context): IOrderService
     {
         try
         {
+            logger.LogInformation("Updating order");
             var update1 = await context.Orders.FirstOrDefaultAsync(x => x.Id == update.Id);
             if (update1 == null) return new Responce<string>(HttpStatusCode.NotFound, "Order not found");
             update1.Status = update.Status;
@@ -62,6 +65,7 @@ public class OrderService(DataContext context): IOrderService
     {
         try
         {
+            logger.LogInformation("Getting orders");
             var query = context.Orders.AsQueryable();
             if (filter.Id.HasValue)
             {
@@ -115,6 +119,7 @@ public class OrderService(DataContext context): IOrderService
     {
         try
         {
+            logger.LogInformation("Getting orders");
             var orders = await context.Orders
                 .Include(o=>o.OrderItems)
                 .Where(o=> o.UserID == userId)
@@ -150,6 +155,7 @@ public class OrderService(DataContext context): IOrderService
     {
         try
         {
+            logger.LogInformation("Getting order");
             var  order = await context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(x => x.Id == id);

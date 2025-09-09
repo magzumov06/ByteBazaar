@@ -6,15 +6,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces.Reviews___Ratings;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services.Reviews___Ratings;
 
-public class ReviewsRatings(DataContext context):IReviewsRatings
+public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):IReviewsRatings
 {
     public async Task<Responce<string>> AddReview(CreateReviewDto dto)
     {
         try
         {
+            logger.LogInformation("Adding review");
             var isBuy =  context.Orders
                 .Include(o => o.OrderItems)
                 .AnyAsync(o => o.UserID == dto.UserId && o.Status == Status.Delivered
@@ -66,6 +68,7 @@ public class ReviewsRatings(DataContext context):IReviewsRatings
     {
         try
         {
+            logger.LogInformation("Updating review");
             var  review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId == dto.UserId && x.ProductId == dto.ProductId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             review.Comment = dto.Comment;
@@ -84,6 +87,7 @@ public class ReviewsRatings(DataContext context):IReviewsRatings
     {
         try
         {
+            logger.LogInformation("Deleting review");
             var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId == userId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             context.Reviews.Remove(review);
@@ -102,6 +106,7 @@ public class ReviewsRatings(DataContext context):IReviewsRatings
     {
         try
         {
+            logger.LogInformation("Getting reviews");
             var reviews = await context.Reviews.Where(x => x.UserId == userId).ToListAsync();
             if(reviews.Count == 0) return new Responce<List<GetReviewDto>>(HttpStatusCode.NotFound, "Review not found");
             var dto =  reviews.Select(x=>new GetReviewDto()
@@ -127,6 +132,7 @@ public class ReviewsRatings(DataContext context):IReviewsRatings
     {
         try
         {
+            logger.LogInformation("Getting all reviews");
             var reviews = await context.Reviews.ToListAsync();
             if(reviews.Count == 0) return new Responce<List<GetReviewDto>>(HttpStatusCode.NotFound, "Reviews not found");
             var dtos = reviews.Select(x=> new GetReviewDto()

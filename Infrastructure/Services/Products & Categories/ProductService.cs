@@ -7,15 +7,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
-public class ProductService(DataContext context): IProductService
+public class ProductService(DataContext context, ILogger<ProductService> logger) : IProductService
 {
     public async Task<Responce<string>> CreateProduct(CreateProductDto create)
     {
         try
-        {
+        { 
+            logger.LogInformation("Creating a new product");
             var newProduct = new Product()
             {
                 Name = create.Name,
@@ -45,6 +47,7 @@ public class ProductService(DataContext context): IProductService
     {
         try
         {
+            logger.LogInformation("Updating a new product");
             var product = await context.Products.FirstOrDefaultAsync(x=> x.Id == update.Id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             product.Name = update.Name;
@@ -69,6 +72,7 @@ public class ProductService(DataContext context): IProductService
     {
         try
         {
+            logger.LogInformation("Deleting a product");
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             product.IsDeleted = true;
@@ -87,6 +91,7 @@ public class ProductService(DataContext context): IProductService
     {
         try
         {
+            logger.LogInformation("Getting a product");
             var product = await context.Products
                 .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false );
             if (product == null) return new Responce<GetProductDto>(HttpStatusCode.NotFound,"Product not found");
@@ -116,6 +121,7 @@ public class ProductService(DataContext context): IProductService
     {
         try
         {
+            logger.LogInformation("Getting products");
             var query = context.Products.AsQueryable();
             if (filter.Id.HasValue)
             {

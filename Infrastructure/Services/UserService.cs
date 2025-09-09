@@ -41,6 +41,7 @@ public class UserService(DataContext context) : IUserService
                 query = query.Where(x => x.Age == filter.Age);
             }
 
+            query = query.Where(x => x.IsDeleted == false);
             var total =await query.CountAsync();
             var skip = (filter.PageNumber - 1) * filter.PageSize;
             var users = await query.Skip(skip).Take(filter.PageSize).ToListAsync();

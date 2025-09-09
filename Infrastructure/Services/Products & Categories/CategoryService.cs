@@ -5,15 +5,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services.Products___Categories;
 
-public class CategoryService(DataContext context): ICategoryService
+public class CategoryService(DataContext context, ILogger<CategoryService> logger) : ICategoryService
 {
     public async Task<Responce<string>> CreateCategory(CreateCategoryDto category)
     {
         try
         {
+            logger.LogInformation("Creating category");
             var newCategory = new Category()
             {
                 Name = category.Name,
@@ -36,6 +38,7 @@ public class CategoryService(DataContext context): ICategoryService
     {
         try
         {
+            logger.LogInformation("Getting categories");
             var categories = await context.Categories.ToListAsync();
             if (categories.Count == 0) return new Responce<List<GetCategoryDto>>(HttpStatusCode.NotFound, "Category not found");
             var dtos = categories.Select(c => new GetCategoryDto()

@@ -2,17 +2,20 @@
 using Domain.DTOs.CartItemDto;
 using Domain.Entities;
 using Infrastructure.Data;
+using Infrastructure.Interfaces;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
-public class CartService(DataContext context) : ICartService
+public class CartService(DataContext context, ILogger<CartService> logger) : ICartService
 {
     public async Task<Responce<string>> AddToCart(CreateCartItemDto create)
     {
         try
         {
+            logger.LogInformation("Adding to cart");
             if(create.Quantity < 1 )
                 return new Responce<string>(HttpStatusCode.BadRequest,"Quantity must be greater than 0");
             var cartItem = await context.CartItems.FirstOrDefaultAsync(x=>x.UserId == create.UserId && x.ProductId == create.ProductId);
@@ -49,6 +52,7 @@ public class CartService(DataContext context) : ICartService
     {
         try
         {
+            logger.LogInformation("Updating cart");
             var updatedCart = await context.CartItems.FirstOrDefaultAsync(x => x.Id == update.Id);
             if (updatedCart == null) return new Responce<string>(HttpStatusCode.NotFound, "CartItem not found");
             updatedCart.Quantity = update.Quantity;
@@ -68,6 +72,7 @@ public class CartService(DataContext context) : ICartService
     {
         try
         {
+            logger.LogInformation("Deleting cart");
             var deletedCart = await context.CartItems.FirstOrDefaultAsync(x => x.Id == id);
             if (deletedCart == null) return new Responce<string>(HttpStatusCode.NotFound, "CartItem not found");
             context.CartItems.Remove(deletedCart);
@@ -86,6 +91,7 @@ public class CartService(DataContext context) : ICartService
     {
         try
         {
+            logger.LogInformation("Getting cart");
             var cartItems = await context.CartItems
                 .Where(x => x.UserId == userId)
                 .ToListAsync();

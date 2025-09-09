@@ -10,5 +10,5 @@ public interface IOrderService
     Task<Responce<string>> UpdateStatusOrder(UpdateOrderDto update);
     Task<PaginationResponce<List<GetOrderDto>>> GetOrders(OrderFilter filter);
     Task<Responce<List<GetOrderDto>>> GetOrders(Guid userId);
-    Task<Responce<GetOrderDto>> GetOrderById(int Id);
+    Task<Responce<GetOrderDto>> GetOrderById(int id);
 }

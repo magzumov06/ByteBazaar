@@ -16,4 +16,5 @@ public class Register
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     public string Email { get;set; }
     public IFormFile? ProfileImage { get; set; }
+    public int Age { get; set; }
 }

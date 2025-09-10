@@ -54,12 +54,21 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
             product.AverageRating = average;
             
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Adding review");
+            }
+            else
+            {
+                logger.LogError("Adding review fail");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review added")
                 : new Responce<string>(HttpStatusCode.NotFound,"Review not added");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -73,12 +82,21 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             review.Comment = dto.Comment;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Updating review");
+            }
+            else
+            {
+                logger.LogError("Updating review fail");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review updated")
                 : new Responce<string>(HttpStatusCode.BadRequest,"Review not updated");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -92,12 +110,21 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             context.Reviews.Remove(review);
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Deleting review");
+            }
+            else
+            {
+                logger.LogError("Deleting review fail");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review deleted")
                 : new Responce<string>(HttpStatusCode.NotFound,"Review not deleted");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -124,6 +151,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -149,6 +177,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

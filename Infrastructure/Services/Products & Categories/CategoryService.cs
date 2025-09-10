@@ -24,12 +24,21 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
             };
              await context.Categories.AddAsync(newCategory);
              var res = await context.SaveChangesAsync();
+             if (res > 0)
+             {
+                 logger.LogInformation("Category created");
+             }
+             else
+             {
+                 logger.LogError("Failed to create category");
+             }
              return res > 0
                  ? new Responce<string>(HttpStatusCode.Created,"Category created")
                  : new Responce<string>(HttpStatusCode.BadRequest,"Category not created");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -49,12 +58,11 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
                 UpdatedAt = c.UpdatedAt,
             }).ToList();
             return new Responce<List<GetCategoryDto>>(dtos);
-
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            logger.LogError("Interval server error");
+            return new Responce<List<GetCategoryDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
 }

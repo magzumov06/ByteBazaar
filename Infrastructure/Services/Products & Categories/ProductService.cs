@@ -33,12 +33,21 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
             };
             await context.Products.AddAsync(newProduct);
             var res =  await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Product created");
+            }
+            else
+            {
+                logger.LogError("Product not created");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.Created,"Product created")
                 : new Responce<string>(HttpStatusCode.BadRequest,"Product not created");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -58,6 +67,14 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
             product.IsDeleted = update.IsDeleted;
             product.UpdatedAt = DateTime.UtcNow;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Product updated");
+            }
+            else
+            {
+                logger.LogError("Product not updated");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Product updated")
                 : new Responce<string>(HttpStatusCode.BadRequest,"Product not updated");
@@ -77,12 +94,21 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             product.IsDeleted = true;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Product deleted");
+            }
+            else
+            {
+                logger.LogError("Product not deleted");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Product deleted")
                 : new Responce<string>(HttpStatusCode.BadRequest,"Product not deleted");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -113,6 +139,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<GetProductDto>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

@@ -26,7 +26,6 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
                 await context.SaveChangesAsync();
                 return new Responce<string>(HttpStatusCode.OK,"Product quantity updated successfully");
             }
-
             var newCart = new CartItem
             {
                 UserId = create.UserId,
@@ -38,12 +37,21 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
             };
             await context.CartItems.AddAsync(newCart);
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Adding to cart");
+            }
+            else
+            {
+                logger.LogError("Failed to add to cart");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.Created, "CartItem successfully added")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Cart item could not be added");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -58,12 +66,21 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
             updatedCart.Quantity = update.Quantity;
             updatedCart.UpdatedAt = DateTime.UtcNow;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Updating cart");
+            }
+            else
+            {
+                logger.LogError("Failed to update cart");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "CartItem successfully updated")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Error");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -77,12 +94,21 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
             if (deletedCart == null) return new Responce<string>(HttpStatusCode.NotFound, "CartItem not found");
             context.CartItems.Remove(deletedCart);
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                logger.LogInformation("Deleting cart");
+            }
+            else
+            {
+                logger.LogError("Failed to delete cart");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "CartItem successfully deleted")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Error");
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -109,6 +135,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
+            logger.LogError("Interval server error");
             return new Responce<List<GetCartItemDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

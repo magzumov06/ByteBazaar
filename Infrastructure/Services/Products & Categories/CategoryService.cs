@@ -38,7 +38,7 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error creating category");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -61,7 +61,7 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting categories");
             return new Responce<List<GetCategoryDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

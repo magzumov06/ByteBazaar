@@ -68,7 +68,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error adding review");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -96,7 +96,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error updating review");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -124,7 +124,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error deleting review");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -151,7 +151,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting reviews");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -177,7 +177,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting reviews");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

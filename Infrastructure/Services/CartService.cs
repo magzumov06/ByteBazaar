@@ -51,7 +51,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error adding to cart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -80,7 +80,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error updating cart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -108,7 +108,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error deleting cart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -135,7 +135,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting cart");
             return new Responce<List<GetCartItemDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

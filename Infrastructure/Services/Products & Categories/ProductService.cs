@@ -47,7 +47,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error creating product");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -81,6 +81,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
+            logger.LogError("Error updating product");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -108,7 +109,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error deleting product");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -139,7 +140,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting product");
             return new Responce<GetProductDto>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -212,6 +213,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
         }
         catch (Exception e)
         {
+            logger.LogError("Error getting products");
             return new PaginationResponce<List<GetProductDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

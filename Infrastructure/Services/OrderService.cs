@@ -46,7 +46,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error creating order");
            return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -74,7 +74,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error updating order");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -130,7 +130,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting orders");
             return new PaginationResponce<List<GetOrderDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -166,7 +166,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting orders");
             return new Responce<List<GetOrderDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -202,7 +202,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Interval server error");
+            logger.LogError("Error getting order");
             return new Responce<GetOrderDto>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

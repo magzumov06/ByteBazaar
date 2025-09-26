@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using Domain.DTOs.CategoryDto;
 using Domain.Entities;
-using Infrastructure.Data;
-using Infrastructure.Interfaces;
-using Infrastructure.Responces;
+using Domain.Responces;
+using Infrastructure.Data; 
+using Infrastructure.Interfaces.IProducts___ICategories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

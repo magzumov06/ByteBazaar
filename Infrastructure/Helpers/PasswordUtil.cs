@@ -1,13 +1,13 @@
 ﻿namespace Infrastructure.Helpers;
 
-public class PasswordUtil
+public  static class PasswordUtil
 {
     public static string GenerateRandomPassword(int length = 8)
     {
-        const string upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const string loweChars = "abcdefghijklmnopqrstuvwxyz";
+        const string upperChars = "ABCDEFG";
+        const string loweChars = "abcdefg";
         const string numericChars = "1234567890";
-        const string specialChars = "-!@#$%^&*";
+        const string specialChars = "-!?";
 
         var random = new Random();
         var chars = new List<char>();

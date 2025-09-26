@@ -2,9 +2,9 @@
 using Domain.DTOs.ReviewDto;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.Responces;
 using Infrastructure.Data;
-using Infrastructure.Interfaces.Reviews___Ratings;
-using Infrastructure.Responces;
+using Infrastructure.Interfaces.Reviews___Ratings; 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -101,12 +101,12 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
     }
 
-    public async Task<Responce<string>> DeleteReview(Guid userId)
+    public async Task<Responce<string>> DeleteReview(int userId)
     {
         try
         {
             logger.LogInformation("Deleting review");
-            var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId == userId);
+            var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId ==  userId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             context.Reviews.Remove(review);
             var res = await context.SaveChangesAsync();
@@ -129,7 +129,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
     }
 
-    public async Task<Responce<List<GetReviewDto>>> GetReviews(Guid userId)
+    public async Task<Responce<List<GetReviewDto>>> GetReviews(int userId)
     {
         try
         {

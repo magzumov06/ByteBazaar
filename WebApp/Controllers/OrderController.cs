@@ -36,7 +36,7 @@ public class OrderController(IOrderService service): Controller
     }
 
     [HttpGet("api/User/{GetUser}")]
-    public async Task<IActionResult> GetOrders(Guid userId)
+    public async Task<IActionResult> GetOrders(int userId)
     {
         var res = await service.GetOrders(userId);
         return Ok(res);

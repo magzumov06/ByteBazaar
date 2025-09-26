@@ -8,10 +8,9 @@ namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController(IAccountService service) : Controller
+public class AccountController(IAccountService service) : ControllerBase
 {
     [HttpPost("register")]
-    [AllowAnonymous]
     public async Task<IActionResult> Register([FromForm] Register request)
     {
         var res = await service.Register(request);
@@ -20,8 +19,7 @@ public class AccountController(IAccountService service) : Controller
 
 
     [HttpPost("login")]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login(LoginDto request)
+    public async Task<IActionResult> Login([FromBody]LoginDto request)
     {
         var res = await service.Login(request);
         return Ok(res);
@@ -29,25 +27,9 @@ public class AccountController(IAccountService service) : Controller
 
     [HttpPut("change-password")]
     [Authorize]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePasswordDto, Guid id)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePasswordDto)
     {
-        var res = await service.ChangePassword(changePasswordDto, id);
-        return Ok(res);
-    }
-
-    [HttpPost("reset-password")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
-    {
-        var res = await service.ResetPassword(resetPasswordDto);
-        return Ok(res);
-    }
-
-    [HttpPost("forgot-password")]
-    [AllowAnonymous]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword forgotPassword)
-    {
-        var res = await service.ForgotPasswordCodeGenerator(forgotPassword);
+        var res = await service.ChangePassword(changePasswordDto);
         return Ok(res);
     }
 }

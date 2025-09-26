@@ -6,7 +6,6 @@ namespace Domain.Entities;
 
 public class User : IdentityUser<int>
 {
-    public Guid Id { get; set; }
     [Required]
     [StringLength(50, MinimumLength = 3)]
     public required string FullName { get; set; }
@@ -19,10 +18,7 @@ public class User : IdentityUser<int>
     [Phone]
     [StringLength(13 , MinimumLength = 9 , ErrorMessage = "Phone length must be between 9 and 13")]
     public required string PhoneNumber { get; set; }
-    public Role Role { get; set; }
     public string? AvatarUrl { get; set; }
-    public string? Code { get; set; }
-    public DateTime CodeDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }

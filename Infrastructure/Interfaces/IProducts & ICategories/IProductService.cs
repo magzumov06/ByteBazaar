@@ -1,14 +1,15 @@
 ﻿using Domain.DTOs.ProductDto;
 using Domain.Filters;
+using Domain.Responces;
 using Infrastructure.Responces;
 
-namespace Infrastructure.Interfaces;
+namespace Infrastructure.Interfaces.IProducts___ICategories;
 
 public interface IProductService
 {
     Task<Responce<string>> CreateProduct(CreateProductDto create);
     Task<Responce<string>> UpdateProduct(UpdateProductDto update);
-    Task<Responce<string>> DeleteProduct(int Id);
-    Task<Responce<GetProductDto>>GetProductById(int Id);
+    Task<Responce<string>> DeleteProduct(int id);
+    Task<Responce<GetProductDto>>GetProductById(int id);
     Task<PaginationResponce<List<GetProductDto>>>GetProducts(ProductFilter filter);
 }

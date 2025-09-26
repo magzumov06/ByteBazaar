@@ -22,14 +22,14 @@ public class ReviewsController(IReviewsRatings service): Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteReview(Guid userId)
+    public async Task<IActionResult> DeleteReview(int userId)
     {
         var res = await service.DeleteReview(userId);
         return Ok(res);
     }
-
+    
     [HttpGet("{my-reviews}")]
-    public async Task<IActionResult> GetReviews(Guid userId)
+    public async Task<IActionResult> GetReviews(int userId)
     {
         var res = await service.GetReviews(userId);
         return Ok(res);

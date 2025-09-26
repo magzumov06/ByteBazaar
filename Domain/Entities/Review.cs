@@ -5,7 +5,7 @@ namespace Domain.Entities;
 public class Review:BaseEntities
 {
     public int Id{get;set;}
-    public Guid UserId{get;set;}
+    public int UserId{get;set;}
     public int ProductId{get;set;}
     [Range(1,5,ErrorMessage = "Rating must be between 1 and 5")]
     [Required]

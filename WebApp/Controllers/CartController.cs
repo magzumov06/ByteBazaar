@@ -31,7 +31,7 @@ public class CartController(ICartService service):Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCart(Guid UserId)
+    public async Task<IActionResult> GetCart(int UserId)
     {
         var res = await service.GetCartItem(UserId);
         return Ok(res);

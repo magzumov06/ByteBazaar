@@ -2,6 +2,7 @@
 using Domain.DTOs.OrderDto;
 using Domain.Entities;
 using Domain.Filters;
+using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
@@ -134,7 +135,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
             return new PaginationResponce<List<GetOrderDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
-    public async Task<Responce<List<GetOrderDto>>> GetOrders(Guid userId)
+    public async Task<Responce<List<GetOrderDto>>> GetOrders(int userId)
     {
         try
         {

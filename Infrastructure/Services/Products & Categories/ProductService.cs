@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using Domain.DTOs.ProductDto;
-using Domain.DTOs.ReviewDto;
 using Domain.Entities;
 using Domain.Filters;
+using Domain.Responces;
 using Infrastructure.Data;
-using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IProducts___ICategories;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Services;
+namespace Infrastructure.Services.Products___Categories;
 
 public class ProductService(DataContext context, ILogger<ProductService> logger) : IProductService
 {

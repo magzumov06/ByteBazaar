@@ -11,6 +11,7 @@ public class Register
     [Required]
     [StringLength(50, MinimumLength = 3, ErrorMessage = "UserName must be between 3 and 50 characters")]
     public string UserName { get;set; }
+    public string? Address { get; set; }
     public string PhoneNumber { get;set; }
     [Required]
     [EmailAddress(ErrorMessage = "Invalid Email Address")]

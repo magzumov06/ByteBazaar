@@ -1,6 +1,7 @@
 ﻿using Domain.DTOs.ProductDto;
 using Domain.Filters;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.IProducts___ICategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

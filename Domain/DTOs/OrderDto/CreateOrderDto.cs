@@ -5,7 +5,7 @@ namespace Domain.DTOs.OrderDto;
 
 public class CreateOrderDto
 {
-    public Guid UserID { get; set; }
+    public int UserID { get; set; }
     public Status Status{get;set;}
     [Required]
     public required string Address{get;set;}

@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using Domain.DTOs.CartItemDto;
 using Domain.Entities;
+using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -113,7 +113,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
     }
 
-    public async Task<Responce<List<GetCartItemDto>>> GetCartItem(Guid userId)
+    public async Task<Responce<List<GetCartItemDto>>> GetCartItem(int userId)
     {
         try
         {

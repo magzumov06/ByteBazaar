@@ -5,6 +5,7 @@ using Infrastructure.Data.Seeder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Domain.DTOs.EmailDto;
 using Infrastructure.Data;
+using Infrastructure.FileStorage;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.IProducts___ICategories;
 using Infrastructure.Interfaces.Reviews___Ratings;
@@ -33,6 +34,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IReviewsRatings, ReviewsRatings>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileStorage>(
+    sp => new FileStorage(builder.Environment.ContentRootPath));
 
 builder.Services.AddHttpContextAccessor();
 

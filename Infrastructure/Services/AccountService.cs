@@ -3,6 +3,7 @@ using Domain.DTOs.Account;
 using Domain.DTOs.EmailDto;
 using Domain.Entities;
 using Domain.Responces;
+using Infrastructure.FileStorage;
 using Infrastructure.Helpers;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
@@ -17,7 +18,8 @@ namespace Infrastructure.Services
         UserManager<User> userManager,
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration,
-        IEmailService emailService) : IAccountService
+        IEmailService emailService,
+        IFileStorage file) : IAccountService
     {
         public async Task<Responce<string>> Register(Register register)
         {
@@ -38,6 +40,10 @@ namespace Infrastructure.Services
                     PhoneNumber = register.PhoneNumber,
                     Age = register.Age,
                 };
+                if (register.ProfileImage != null)
+                {
+                    user.AvatarUrl = await file.SaveFile(register.ProfileImage, "Image");
+                }
                 var password = PasswordUtil.GenerateRandomPassword();
                 var result = await userManager.CreateAsync(user, password);
                 await userManager.AddToRoleAsync(user, "Customer");

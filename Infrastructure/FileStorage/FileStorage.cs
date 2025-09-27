@@ -27,7 +27,7 @@ public class FileStorage(string rootPath) : IFileStorage
         }
     }
 
-    public Task DeleteFile(string relativeFolder)
+    public Task DeleteFile(string? relativeFolder)
     {
         try
         {

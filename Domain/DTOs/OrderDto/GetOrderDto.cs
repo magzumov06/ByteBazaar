@@ -12,8 +12,7 @@ public class GetOrderDto:UpdateOrderDto
     public Status Status{get;set;}
     public string Address{get;set;}
     public PaymentMethod PaymentMethod {get;set;}
-    public bool IsDeleted{get;set;}
     public DateTime CreatedAt{get;set;}
     public DateTime UpdatedAt{get;set;}
-    public List<Filters.OrderItemDto> OrderItems { get; set; }
+    public List<Filters.OrderItemFilter> OrderItems { get; set; }
 }

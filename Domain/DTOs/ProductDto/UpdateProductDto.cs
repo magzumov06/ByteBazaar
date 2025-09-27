@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Domain.DTOs.ProductDto;
 
@@ -11,6 +12,5 @@ public class UpdateProductDto
     public decimal Price { get; set; }
     public int Quantity { get; set; }
     public int CategoryId { get; set; }
-    public string? ImageUrl { get; set; }
-    public bool IsDeleted { get; set; }
+    public IFormFile? ImageUrl { get; set; }
 }

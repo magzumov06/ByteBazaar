@@ -10,5 +10,4 @@ public class UpdateReviewDto
     [Range(1,5,ErrorMessage = "Rating must be between 1 and 5")]
     public decimal Rating {get;set;}
     public string? Comment  { get; set; }
-    public bool IsDeleted { get; set; }
 }

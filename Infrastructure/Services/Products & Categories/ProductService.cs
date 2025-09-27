@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Filters;
 using Domain.Responces;
 using Infrastructure.Data;
+using Infrastructure.FileStorage;
 using Infrastructure.Interfaces.IProducts___ICategories;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services.Products___Categories;
 
-public class ProductService(DataContext context, ILogger<ProductService> logger) : IProductService
+public class ProductService(DataContext context, 
+    ILogger<ProductService> logger,
+    IFileStorage file) : IProductService
 {
     public async Task<Responce<string>> CreateProduct(CreateProductDto create)
     {
@@ -31,6 +34,10 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
                 UpdatedAt = DateTime.UtcNow,
                 IsDeleted = false,
             };
+            if (create.ImageUrl != null)
+            {
+                newProduct.ImageUrl = await file.SaveFile(create.ImageUrl,"Image");
+            }
             await context.Products.AddAsync(newProduct);
             var res =  await context.SaveChangesAsync();
             if (res > 0)
@@ -59,12 +66,16 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
             logger.LogInformation("Updating a new product");
             var product = await context.Products.FirstOrDefaultAsync(x=> x.Id == update.Id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
+            if (update.ImageUrl != null)
+            {
+                await file.DeleteFile(product?.ImageUrl!);
+            }
             product.Name = update.Name;
             product.Description = update.Description;
             product.Price = update.Price;
             product.Quantity = update.Quantity;
             product.CategoryId = update.CategoryId;
-            product.IsDeleted = update.IsDeleted;
+            product.ImageUrl = await file.SaveFile(update.ImageUrl!,"Image");
             product.UpdatedAt = DateTime.UtcNow;
             var res = await context.SaveChangesAsync();
             if (res > 0)
@@ -132,6 +143,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
                 CategoryId = product.CategoryId,
                 AverageRating = product.AverageRating,
                 RatingCount = product.RatingCount,
+                ImageUrl = product.ImageUrl,
                 UpdatedAt = product.UpdatedAt,
                 CreatedAt = product.CreatedAt
             };
@@ -205,7 +217,7 @@ public class ProductService(DataContext context, ILogger<ProductService> logger)
                 CategoryId = x.CategoryId,
                 AverageRating = x.AverageRating,
                 RatingCount = x.RatingCount,
-                IsDeleted = x.IsDeleted,
+                ImageUrl = x.ImageUrl,
                 UpdatedAt = x.UpdatedAt,
                 CreatedAt = x.CreatedAt
             }).ToList();

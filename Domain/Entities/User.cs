@@ -14,10 +14,10 @@ public class User : IdentityUser<int>
     [StringLength(150)]
     public string? Address { get; set; }
     [EmailAddress]
-    public required string Email { get; set; }
+    public override required string Email { get; set; }
     [Phone]
     [StringLength(13 , MinimumLength = 9 , ErrorMessage = "Phone length must be between 9 and 13")]
-    public required string PhoneNumber { get; set; }
+    public override required string PhoneNumber { get; set; }
     public string? AvatarUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

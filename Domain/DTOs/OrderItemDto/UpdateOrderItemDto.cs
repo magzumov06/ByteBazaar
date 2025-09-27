@@ -7,5 +7,4 @@ public class UpdateOrderItemDto
     public int ProductId{get;set;}
     public int Quantity{get;set;}
     public decimal Price{get;set;}
-    public bool IsDeleted { get; set; }
 }

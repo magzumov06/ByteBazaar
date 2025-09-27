@@ -19,7 +19,6 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         {
             logger.LogInformation("Creating order");
             var cartItem =  context.CartItems
-                .Include(c => c.Product)
                 .Where(c => c.UserId == create.UserID);
             if(!cartItem.Any()) return new Responce<string>(HttpStatusCode.BadRequest,"CartItems not found");
             var order = new Order()
@@ -29,7 +28,6 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
                 Status = create.Status,
                 Address = create.Address,
                 PaymentMethod = create.PaymentMethod,
-                TotalAmount = cartItem.Sum(c => c.Product.Price * c.Quantity),
             };
             await context.Orders.AddAsync(order);
             var res = await context.SaveChangesAsync();
@@ -117,7 +115,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
                 PaymentMethod = x.PaymentMethod,
                 Status = x.Status,
                 TotalAmount = x.TotalAmount,
-                OrderItems = x.OrderItems.Select(oi => new OrderItemDto()
+                OrderItems = x.OrderItems.Select(oi => new OrderItemFilter()
                 {
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
@@ -152,8 +150,8 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
                 Address = x.Address,
                 PaymentMethod = x.PaymentMethod,
                 Status = x.Status,
-                TotalAmount = x.TotalAmount,
-                OrderItems = x.OrderItems.Select(oi => new OrderItemDto()
+                TotalAmount = x.OrderItems.Sum(oi => oi.Price),
+                OrderItems = x.OrderItems.Select(oi => new OrderItemFilter()
                 {
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,
@@ -188,8 +186,8 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
                 Address = order.Address,
                 PaymentMethod = order.PaymentMethod,
                 Status = order.Status,
-                TotalAmount = order.TotalAmount,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemDto()
+                TotalAmount = order.OrderItems.Sum(oi => oi.Price),
+                OrderItems = order.OrderItems.Select(oi => new OrderItemFilter()
                 {
                     ProductId = oi.ProductId,
                     Quantity = oi.Quantity,

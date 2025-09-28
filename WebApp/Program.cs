@@ -16,8 +16,20 @@ using Infrastructure.Services.Reviews___Ratings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console(
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
+    .WriteTo.File(
+        "logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .MinimumLevel.Debug() 
+    .CreateLogger();
 
 
 builder.Services.AddDbContext<DataContext>(opt =>
@@ -32,6 +44,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IReviewsRatings, ReviewsRatings>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileStorage>(

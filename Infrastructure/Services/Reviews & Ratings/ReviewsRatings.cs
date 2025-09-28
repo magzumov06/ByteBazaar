@@ -7,22 +7,22 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces.Reviews___Ratings; 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Infrastructure.Services.Reviews___Ratings;
 
-public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):IReviewsRatings
+public class ReviewsRatings(DataContext context) : IReviewsRatings
 {
     public async Task<Responce<string>> AddReview(CreateReviewDto dto)
     {
         try
         {
-            logger.LogInformation("Adding review");
-            var isBuy =  context.Orders
+            Log.Information("Adding review");
+            var isBuy = await context.Orders
                 .Include(o => o.OrderItems)
-                .AnyAsync(o => o.UserID == dto.UserId && o.Status == Status.Delivered
-                                                      && o.OrderItems.Any(oi => oi.ProductId == dto.ProductId)
-                );
-            if (isBuy != null)
+                .AnyAsync(o => o.UserId == dto.UserId && o.Status == Status.Delivered
+                && o.OrderItems!.Any(oi => oi.Product!.Id == dto.ProductId));
+            if (!isBuy)
             {
                 return new Responce<string>(HttpStatusCode.BadRequest,
                     "Шумо ин маҳсулотро ҳоло нахаридаед.Аз ин сабаб шарҳ гузошта наметавонед!");
@@ -56,11 +56,11 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Adding review");
+                Log.Information("Adding review");
             }
             else
             {
-                logger.LogError("Adding review fail");
+                Log.Fatal("Adding review fail");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review added")
@@ -68,7 +68,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Error adding review");
+            Log.Error("Error in AddReview");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -77,18 +77,18 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
     {
         try
         {
-            logger.LogInformation("Updating review");
+            Log.Information("Updating review");
             var  review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId == dto.UserId && x.ProductId == dto.ProductId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             review.Comment = dto.Comment;
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Updating review");
+                Log.Information("Updating review");
             }
             else
             {
-                logger.LogError("Updating review fail");
+                Log.Fatal("Updating review fail");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review updated")
@@ -96,7 +96,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Error updating review");
+            Log.Error("Error in UpdateReview");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -105,18 +105,18 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
     {
         try
         {
-            logger.LogInformation("Deleting review");
+            Log.Information("Deleting review");
             var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId ==  userId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             context.Reviews.Remove(review);
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Deleting review");
+                Log.Information("Deleting review");
             }
             else
             {
-                logger.LogError("Deleting review fail");
+                Log.Fatal("Deleting review fail");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Review deleted")
@@ -124,7 +124,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Error deleting review");
+            Log.Error("Error in DeleteReview");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -133,7 +133,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
     {
         try
         {
-            logger.LogInformation("Getting reviews");
+            Log.Information("Getting reviews");
             var reviews = await context.Reviews.Where(x => x.UserId == userId).ToListAsync();
             if(reviews.Count == 0) return new Responce<List<GetReviewDto>>(HttpStatusCode.NotFound, "Review not found");
             var dto =  reviews.Select(x=>new GetReviewDto()
@@ -151,7 +151,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting reviews");
+            Log.Error("Error in  GetReviews");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -160,7 +160,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
     {
         try
         {
-            logger.LogInformation("Getting all reviews");
+            Log.Information("Getting all reviews");
             var reviews = await context.Reviews.ToListAsync();
             if(reviews.Count == 0) return new Responce<List<GetReviewDto>>(HttpStatusCode.NotFound, "Reviews not found");
             var dtos = reviews.Select(x=> new GetReviewDto()
@@ -177,7 +177,7 @@ public class ReviewsRatings(DataContext context, ILogger<ReviewsRatings>logger):
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting reviews");
+            Log.Error("Error in GetAllReviews");
             return new Responce<List<GetReviewDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

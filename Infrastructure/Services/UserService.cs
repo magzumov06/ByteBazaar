@@ -6,8 +6,8 @@ using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.FileStorage;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Infrastructure.Services;
 
@@ -18,6 +18,7 @@ public class UserService(DataContext context,
     {
         try
         {
+            Log.Information("Updating user");
             var update = await context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
             if(update == null) return new Responce<string>(HttpStatusCode.NotFound, "User not found");
             if(user.AvatarUrl != null){await file.DeleteFile(update.AvatarUrl);}
@@ -28,12 +29,21 @@ public class UserService(DataContext context,
             update.PhoneNumber = user.PhoneNumber;
             update.AvatarUrl = await file.SaveFile(user.AvatarUrl!,"image");
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                Log.Information("User updated");
+            }
+            else
+            {
+                Log.Fatal("Failed to update user");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "User successfully updated")
                 : new Responce<string>(HttpStatusCode.NotFound, "User not update");
         }
         catch (Exception e)
         {
+            Log.Error("Error in UpdateUser");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -42,16 +52,26 @@ public class UserService(DataContext context,
     {
         try
         {
+            Log.Information("Deleting user");
             var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if(user == null) return new Responce<string>(HttpStatusCode.NotFound, "User not found");
             user.IsDeleted = true;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                Log.Information("User deleted");
+            }
+            else
+            {
+                Log.Fatal("Failed to delete user");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "User successfully deleted")
                 : new Responce<string>(HttpStatusCode.NotFound, "User not deleted");
         }
         catch (Exception e)
         {
+            Log.Error("Error in DeleteUser");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -60,6 +80,7 @@ public class UserService(DataContext context,
     {
         try
         {
+            Log.Information("Getting user");
             var get =  await context.Users.FirstOrDefaultAsync(x => x.Id == id);
             if(get == null) return new Responce<GetUserDto>(HttpStatusCode.NotFound, "User not found");
             var dto = new GetUserDto()
@@ -78,6 +99,7 @@ public class UserService(DataContext context,
         }
         catch (Exception e)
         {
+            Log.Error("Error in GetUser");
             return new Responce<GetUserDto>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -86,6 +108,7 @@ public class UserService(DataContext context,
     {
         try
         {
+            Log.Information("Getting users");
             var query = context.Users.AsQueryable();
             if (!string.IsNullOrEmpty(filter.FullName))
             {
@@ -120,6 +143,7 @@ public class UserService(DataContext context,
             var dtos = users.Select(x=> new GetUserDto()
             {
                 Id = x.Id,
+                FullName = x.FullName,
                 Age = x.Age,
                 Address = x.Address,
                 Email = x.Email,
@@ -131,6 +155,7 @@ public class UserService(DataContext context,
         }
         catch (Exception e)
         {
+            Log.Error("Error in GetUsers");
             return new PaginationResponce<List<GetUserDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

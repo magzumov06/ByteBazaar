@@ -1,9 +1,8 @@
 ﻿using System.Net;
-using Domain.Responces;
 
-namespace Infrastructure.Responces;
+namespace Domain.Responces;
 
-public class PaginationResponce<T>:Responce<T>
+public class PaginationResponce<T> : Responce<T>
 {
     public int PageNumber {get;set;}
     public int PageSize {get;set;}

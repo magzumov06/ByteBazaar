@@ -1,6 +1,5 @@
 ﻿using Domain.DTOs.Account;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,6 @@
 ﻿using Domain.DTOs.OrderDto;
 using Domain.Filters;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +37,7 @@ public class OrderController(IOrderService service): Controller
     [HttpGet("api/User/{GetUser}")]
     public async Task<IActionResult> GetOrders(int userId)
     {
-        var res = await service.GetOrders(userId);
+        var res = await service.GetOrdersByUserId(userId);
         return Ok(res);
     }
 

@@ -6,16 +6,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Infrastructure.Services;
 
-public class CartService(DataContext context, ILogger<CartService> logger) : ICartService
+public class CartService(DataContext context) : ICartService
 {
     public async Task<Responce<string>> AddToCart(CreateCartItemDto create)
     {
         try
         {
-            logger.LogInformation("Adding to cart");
+            Log.Information("Adding to cart");
             if(create.Quantity < 1 )
                 return new Responce<string>(HttpStatusCode.BadRequest,"Quantity must be greater than 0");
             var cartItem = await context.CartItems.FirstOrDefaultAsync(x=>x.UserId == create.UserId && x.ProductId == create.ProductId);
@@ -39,11 +40,11 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Adding to cart");
+                Log.Information("Adding to cart");
             }
             else
             {
-                logger.LogError("Failed to add to cart");
+                Log.Fatal("Failed to add to cart");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.Created, "CartItem successfully added")
@@ -51,7 +52,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Error adding to cart");
+            Log.Error("Error in CreateCart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -60,7 +61,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
     {
         try
         {
-            logger.LogInformation("Updating cart");
+            Log.Information("Updating cart");
             var updatedCart = await context.CartItems.FirstOrDefaultAsync(x => x.Id == update.Id);
             if (updatedCart == null) return new Responce<string>(HttpStatusCode.NotFound, "CartItem not found");
             updatedCart.Quantity = update.Quantity;
@@ -68,11 +69,11 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Updating cart");
+                Log.Information("Updating cart");
             }
             else
             {
-                logger.LogError("Failed to update cart");
+                Log.Fatal("Failed to update cart");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "CartItem successfully updated")
@@ -80,7 +81,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Error updating cart");
+            Log.Error("Error in  UpdateCart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -89,18 +90,18 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
     {
         try
         {
-            logger.LogInformation("Deleting cart");
+            Log.Information("Deleting cart");
             var deletedCart = await context.CartItems.FirstOrDefaultAsync(x => x.Id == id);
             if (deletedCart == null) return new Responce<string>(HttpStatusCode.NotFound, "CartItem not found");
             context.CartItems.Remove(deletedCart);
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Deleting cart");
+                Log.Information("Deleting cart");
             }
             else
             {
-                logger.LogError("Failed to delete cart");
+                Log.Fatal("Failed to delete cart");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "CartItem successfully deleted")
@@ -108,7 +109,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Error deleting cart");
+            Log.Error("Error in  DeleteCart");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -117,7 +118,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
     {
         try
         {
-            logger.LogInformation("Getting cart");
+            Log.Information("Getting cart");
             var cartItems = await context.CartItems
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
@@ -135,7 +136,7 @@ public class CartService(DataContext context, ILogger<CartService> logger) : ICa
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting cart");
+            Log.Error("Error in GetCartItem");
             return new Responce<List<GetCartItemDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

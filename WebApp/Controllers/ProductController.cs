@@ -13,7 +13,7 @@ public class ProductController(IProductService service):ControllerBase
 {
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateProduct(CreateProductDto product)
+    public async Task<IActionResult> CreateProduct([FromForm]CreateProductDto product)
     {
         var res = await service.CreateProduct(product);
         return Ok(res);

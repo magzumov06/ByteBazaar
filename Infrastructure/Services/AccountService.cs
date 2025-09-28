@@ -6,11 +6,11 @@ using Domain.Responces;
 using Infrastructure.FileStorage;
 using Infrastructure.Helpers;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Infrastructure.Services.EmailServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace Infrastructure.Services
 {
@@ -25,6 +25,7 @@ namespace Infrastructure.Services
         {
             try
             {
+                Log.Information("Registering new account");
                 var existingUser = await userManager.FindByNameAsync(register.UserName);
                 if (existingUser != null)
                     return new Responce<string>(HttpStatusCode.BadRequest, "User already exists");
@@ -61,6 +62,7 @@ namespace Infrastructure.Services
             }
             catch (Exception e)
             {
+                Log.Error("Error in Register");
                 return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
             }
         }
@@ -69,6 +71,7 @@ namespace Infrastructure.Services
         {
             try
             {
+                Log.Information("Logining account");
                 var user = await userManager.FindByNameAsync(login.UserName);
                 if (user == null)
                     return new Responce<string>(HttpStatusCode.NotFound, "Номи корбар ё рамз нодуруст аст");
@@ -80,6 +83,7 @@ namespace Infrastructure.Services
             }
             catch (Exception e)
             {
+                Log.Error("Error in Login");
                 return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
             }
         }
@@ -88,6 +92,7 @@ namespace Infrastructure.Services
         {
             try
             {
+                Log.Information("Changing password");
                 var userClaims = httpContextAccessor.HttpContext?.User.FindFirst("UserId")?.Value
                                  ?? httpContextAccessor.HttpContext?.User.FindFirst("NameId")?.Value;
                 var userId = int.TryParse(userClaims, out var id);
@@ -102,6 +107,7 @@ namespace Infrastructure.Services
             }
             catch (Exception ex)
             {
+                Log.Error("Error in ChangePassword");
                 return new Responce<string>(HttpStatusCode.InternalServerError,
                     $"Хатогӣ ҳангоми ивазкунии рамз: {ex.Message}");
             }

@@ -5,8 +5,8 @@ using Domain.Filters;
 using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Infrastructure.Services;
 
@@ -16,23 +16,35 @@ public class OrderItemService(DataContext context) : IOrderItemService
     {
         try
         {
+            Log.Information("Creating order item");
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == dto.ProductId);
+            if (product == null) return new Responce<string>(HttpStatusCode.NotFound, "Product not found");
             var newOrderItem = new OrderItem()
             {
                 OrderId = dto.OrderId,
                 ProductId = dto.ProductId,
-                Price = dto.Price,
+                Price = product.Price,
                 Quantity = dto.Quantity,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
             await context.OrderItems.AddAsync(newOrderItem);
             var res =  await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                Log.Information("Order item created");
+            }
+            else
+            {
+                Log.Fatal("Order item could not be created");
+            }
             return res > 0 
                 ? new Responce<string>(HttpStatusCode.Created, "Order item created")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Order item not created");
         }
         catch (Exception e)
         {
+            Log.Error("Error in CreateOrderItem");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -41,18 +53,27 @@ public class OrderItemService(DataContext context) : IOrderItemService
     {
         try
         {
+            Log.Information("Updating order item");
             var  orderItem = await context.OrderItems.FirstOrDefaultAsync(x=>x.Id == dto.Id);
             if(orderItem == null) return new Responce<string>(HttpStatusCode.NotFound, "Order item not found");
             orderItem.Quantity = dto.Quantity;
-            orderItem.Price = dto.Price;
             orderItem.UpdatedAt = DateTime.UtcNow;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                Log.Information("Order item updated");
+            }
+            else
+            {
+                Log.Fatal("Order item could not be updated");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "Order item updated")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Order item not updated");
         }
         catch (Exception e)
         {
+            Log.Error("Error in UpdateOrderItem");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -61,16 +82,26 @@ public class OrderItemService(DataContext context) : IOrderItemService
     {
         try
         {
+            Log.Information("Deleting order item");
             var orderItem = await context.OrderItems.FirstOrDefaultAsync(x => x.Id == id);
             if(orderItem == null) return new Responce<string>(HttpStatusCode.NotFound, "Order item not found");
             orderItem.IsDeleted = true;
             var res = await context.SaveChangesAsync();
+            if (res > 0)
+            {
+                Log.Information("Order item deleted");
+            }
+            else
+            {
+                Log.Fatal("Order item could not be deleted");
+            }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "Order item deleted")
                 : new Responce<string>(HttpStatusCode.BadRequest, "Order item not deleted");
         }
         catch (Exception e)
         {
+            Log.Error("Error in DeleteOrderItem");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -79,6 +110,7 @@ public class OrderItemService(DataContext context) : IOrderItemService
     {
         try
         {
+            Log.Information("Getting order item");
             var orderItem = await context.OrderItems.FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false);
             if(orderItem == null) return new Responce<GetOrderItemDto>(HttpStatusCode.NotFound, "Order item not found");
             var dto = new GetOrderItemDto()
@@ -95,6 +127,7 @@ public class OrderItemService(DataContext context) : IOrderItemService
         }
         catch (Exception e)
         {
+            Log.Error("Error in GetOrderItem");
             return new Responce<GetOrderItemDto>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -103,6 +136,7 @@ public class OrderItemService(DataContext context) : IOrderItemService
     {
         try
         {
+            Log.Information("Getting order items");
             var query = context.OrderItems.AsQueryable();
             if (filter.Id.HasValue)
             {
@@ -147,6 +181,7 @@ public class OrderItemService(DataContext context) : IOrderItemService
         }
         catch (Exception e)
         {
+            Log.Error("Error in GetOrderItems");
             return new PaginationResponce<List<GetOrderItemDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

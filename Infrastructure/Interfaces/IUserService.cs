@@ -2,7 +2,6 @@
 using Domain.Entities;
 using Domain.Filters;
 using Domain.Responces;
-using Infrastructure.Responces;
 
 namespace Infrastructure.Interfaces;
 

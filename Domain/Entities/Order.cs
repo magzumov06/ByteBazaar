@@ -3,10 +3,10 @@ using Domain.Enums;
 
 namespace Domain.Entities;
 
-public class Order:BaseEntities
+public class Order : BaseEntities
 {
     public int Id{get;set;}
-    public int UserID{get;set;}
+    public int UserId{get;set;}
     public DateTime OrderDate{get;set;}
     public decimal TotalAmount{get;set;}
     public Status Status{get;set;}

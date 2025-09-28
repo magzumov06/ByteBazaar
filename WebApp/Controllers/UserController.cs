@@ -2,13 +2,14 @@
 using Domain.Entities;
 using Domain.Filters;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(IUserService service) :Controller
+public class UserController(IUserService service) : Controller
 {
     [HttpPut]
     public async Task<IActionResult> Update(UpdateUserDto dto)
@@ -17,7 +18,16 @@ public class UserController(IUserService service) :Controller
         return Ok(res);
     }
 
+    [HttpDelete]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var res = await service.DeleteUser(id);
+        return Ok(res);
+    }
+
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get(int id)
     {
         var res = await service.GetUser(id);
@@ -25,6 +35,7 @@ public class UserController(IUserService service) :Controller
     }
     
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetUsers([FromQuery] UserFilter filter)
     {
         var res  = await service.GetUsers(filter);

@@ -5,25 +5,25 @@ using Domain.Filters;
 using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
-using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Infrastructure.Services;
 
-public class OrderService(DataContext context, ILogger<OrderService> logger): IOrderService
+public class OrderService(DataContext context): IOrderService
 {
     public async Task<Responce<string>> CreateOrder(CreateOrderDto create)
     {
         try
         {
-            logger.LogInformation("Creating order");
+            Log.Information("Creating order");
             var cartItem =  context.CartItems
-                .Where(c => c.UserId == create.UserID);
+                .Where(c => c.UserId == create.UserId);
             if(!cartItem.Any()) return new Responce<string>(HttpStatusCode.BadRequest,"CartItems not found");
             var order = new Order()
             {
-                UserID = create.UserID,
+                UserId = create.UserId,
                 OrderDate = DateTime.UtcNow,
                 Status = create.Status,
                 Address = create.Address,
@@ -33,11 +33,11 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Order created");
+                Log.Information("Order created");
             }
             else
             {
-                logger.LogError("Order create failed");
+                Log.Fatal("Order create failed");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Order created")
@@ -45,7 +45,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Error creating order");
+            Log.Error("Error in CreateOrder");
            return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -54,18 +54,18 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
     {
         try
         {
-            logger.LogInformation("Updating order");
+            Log.Information("Updating order");
             var update1 = await context.Orders.FirstOrDefaultAsync(x => x.Id == update.Id);
             if (update1 == null) return new Responce<string>(HttpStatusCode.NotFound, "Order not found");
             update1.Status = update.Status;
             var res = await context.SaveChangesAsync();
             if (res > 0)
-            {
-                logger.LogInformation("Order updated");
+            { 
+                Log.Information("Order updated");
             }
             else
             {
-                logger.LogError("Order update failed");
+                Log.Fatal("Order update failed");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK, "Order updated")
@@ -73,7 +73,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Error updating order");
+            Log.Error("Error in UpdateStatusOrder");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -82,7 +82,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
     {
         try
         {
-            logger.LogInformation("Getting orders");
+            Log.Information("Getting orders");
             var query = context.Orders.AsQueryable();
             if (filter.Id.HasValue)
             {
@@ -92,6 +92,16 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
             if (!string.IsNullOrEmpty(filter.Address))
             {
                 query = query.Where(x => x.Address.Contains(filter.Address));
+            }
+
+            if (filter.UserId.HasValue)
+            {
+                query = query.Where(x => x.UserId == filter.UserId);
+            }
+            
+            if (filter.TotalAmount.HasValue)
+            {
+                query = query.Where(x => x.TotalAmount == filter.TotalAmount);
             }
 
             if (filter.PaymentMethod.HasValue)
@@ -129,24 +139,24 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting orders");
+            Log.Error("Error in GetOrders");
             return new PaginationResponce<List<GetOrderDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
-    public async Task<Responce<List<GetOrderDto>>> GetOrders(int userId)
+    public async Task<Responce<List<GetOrderDto>>> GetOrdersByUserId(int userId)
     {
         try
         {
-            logger.LogInformation("Getting orders");
+            Log.Information("Getting orders");
             var orders = await context.Orders
                 .Include(o=>o.OrderItems)
-                .Where(o=> o.UserID == userId)
+                .Where(o=> o.UserId == userId)
                 .ToListAsync();
             if(orders.Count == 0) return new Responce<List<GetOrderDto>>(HttpStatusCode.NotFound,"Orders not found");
             var dtos = orders.Select(x=>  new GetOrderDto()
             {
                 Id = x.Id,
-                UserId = x.UserID,
+                UserId = x.UserId,
                 Address = x.Address,
                 PaymentMethod = x.PaymentMethod,
                 Status = x.Status,
@@ -165,7 +175,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting orders");
+            Log.Error("Error in GetOrdersByUserId");
             return new Responce<List<GetOrderDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -174,7 +184,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
     {
         try
         {
-            logger.LogInformation("Getting order");
+            Log.Information("Getting order");
             var  order = await context.Orders
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -182,7 +192,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
             var dto = new GetOrderDto()
             {
                 Id = order.Id,
-                UserId = order.UserID,
+                UserId = order.UserId,
                 Address = order.Address,
                 PaymentMethod = order.PaymentMethod,
                 Status = order.Status,
@@ -201,7 +211,7 @@ public class OrderService(DataContext context, ILogger<OrderService> logger): IO
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting order");
+            Log.Error("Error in GetOrderById");
             return new Responce<GetOrderDto>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

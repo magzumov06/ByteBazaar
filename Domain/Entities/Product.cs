@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Domain.Entities;
 
-public class Product:BaseEntities
+public class Product : BaseEntities
 {
     public int Id { get; set; }
     [Required]
@@ -16,6 +16,7 @@ public class Product:BaseEntities
     public string? ImageUrl { get; set; }
     public decimal AverageRating { get; set; }
     public int RatingCount { get; set; }
+    
     public List<Review>? Reviews { get; set; }
     public List<OrderItem>? OrderItems { get; set; }
     public List<CartItem>? CartItems { get; set; }

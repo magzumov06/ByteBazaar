@@ -1,5 +1,6 @@
 ﻿using Domain.DTOs.ReviewDto;
 using Infrastructure.Interfaces.Reviews___Ratings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;

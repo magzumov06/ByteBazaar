@@ -1,6 +1,5 @@
 ﻿using Domain.DTOs.ReviewDto;
 using Domain.Responces;
-using Infrastructure.Responces;
 
 namespace Infrastructure.Interfaces.Reviews___Ratings;
 

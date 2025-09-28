@@ -6,16 +6,17 @@ using Infrastructure.Data;
 using Infrastructure.Interfaces.IProducts___ICategories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Infrastructure.Services.Products___Categories;
 
-public class CategoryService(DataContext context, ILogger<CategoryService> logger) : ICategoryService
+public class CategoryService(DataContext context) : ICategoryService
 {
     public async Task<Responce<string>> CreateCategory(CreateCategoryDto category)
     {
         try
         {
-            logger.LogInformation("Creating category");
+            Log.Information("Creating category");
             var newCategory = new Category()
             {
                 Name = category.Name,
@@ -26,11 +27,11 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
              var res = await context.SaveChangesAsync();
              if (res > 0)
              {
-                 logger.LogInformation("Category created");
+                 Log.Information("Category created");
              }
              else
              {
-                 logger.LogError("Failed to create category");
+                 Log.Fatal("Failed to create category");
              }
              return res > 0
                  ? new Responce<string>(HttpStatusCode.Created,"Category created")
@@ -38,7 +39,7 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
         }
         catch (Exception e)
         {
-            logger.LogError("Error creating category");
+            Log.Error("Error in CreateCategory");
             return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
         }
     }
@@ -47,7 +48,7 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
     {
         try
         {
-            logger.LogInformation("Getting categories");
+            Log.Information("Getting categories");
             var categories = await context.Categories.ToListAsync();
             if (categories.Count == 0) return new Responce<List<GetCategoryDto>>(HttpStatusCode.NotFound, "Category not found");
             var dtos = categories.Select(c => new GetCategoryDto()
@@ -61,7 +62,7 @@ public class CategoryService(DataContext context, ILogger<CategoryService> logge
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting categories");
+            Log.Error("Error in GetCategory");
             return new Responce<List<GetCategoryDto>>(HttpStatusCode.InternalServerError, e.Message);
         }
     }

@@ -9,8 +9,8 @@ public class CreateProductDto
     [MinLength(3 , ErrorMessage = "Name minimum length must be 3" )]
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public decimal Price { get; set; }
-    public int Quantity { get; set; }
-    public int CategoryId { get; set; }
+    public required decimal Price { get; set; }
+    public required int Quantity { get; set; }
+    public required int CategoryId { get; set; }
     public IFormFile? ImageUrl { get; set; }
 }

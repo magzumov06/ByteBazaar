@@ -6,21 +6,19 @@ using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.FileStorage;
 using Infrastructure.Interfaces.IProducts___ICategories;
-using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Infrastructure.Services.Products___Categories;
 
 public class ProductService(DataContext context, 
-    ILogger<ProductService> logger,
     IFileStorage file) : IProductService
 {
     public async Task<Responce<string>> CreateProduct(CreateProductDto create)
     {
         try
         { 
-            logger.LogInformation("Creating a new product");
+            Log.Information("Creating a new product");
             var newProduct = new Product()
             {
                 Name = create.Name,
@@ -42,11 +40,11 @@ public class ProductService(DataContext context,
             var res =  await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Product created");
+                Log.Information("Product created");
             }
             else
             {
-                logger.LogError("Product not created");
+                Log.Fatal("Product not created");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.Created,"Product created")
@@ -54,7 +52,7 @@ public class ProductService(DataContext context,
         }
         catch (Exception e)
         {
-            logger.LogError("Error creating product");
+            Log.Error("Error in CreateProduct");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -63,7 +61,7 @@ public class ProductService(DataContext context,
     {
         try
         {
-            logger.LogInformation("Updating a new product");
+            Log.Information("Updating a new product");
             var product = await context.Products.FirstOrDefaultAsync(x=> x.Id == update.Id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             if (update.ImageUrl != null)
@@ -80,11 +78,11 @@ public class ProductService(DataContext context,
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Product updated");
+                Log.Information("Product updated");
             }
             else
             {
-                logger.LogError("Product not updated");
+                Log.Fatal("Product not updated");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Product updated")
@@ -92,7 +90,7 @@ public class ProductService(DataContext context,
         }
         catch (Exception e)
         {
-            logger.LogError("Error updating product");
+            Log.Error("Error in UpdateProduct");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -101,18 +99,18 @@ public class ProductService(DataContext context,
     {
         try
         {
-            logger.LogInformation("Deleting a product");
+            Log.Information("Deleting a product");
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             product.IsDeleted = true;
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
-                logger.LogInformation("Product deleted");
+                Log.Information("Product deleted");
             }
             else
             {
-                logger.LogError("Product not deleted");
+                Log.Fatal("Product not deleted");
             }
             return res > 0
                 ? new Responce<string>(HttpStatusCode.OK,"Product deleted")
@@ -120,7 +118,7 @@ public class ProductService(DataContext context,
         }
         catch (Exception e)
         {
-            logger.LogError("Error deleting product");
+            Log.Error("Error in DeleteProduct");
             return new Responce<string>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -129,7 +127,7 @@ public class ProductService(DataContext context,
     {
         try
         {
-            logger.LogInformation("Getting a product");
+            Log.Information("Getting a product");
             var product = await context.Products
                 .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false );
             if (product == null) return new Responce<GetProductDto>(HttpStatusCode.NotFound,"Product not found");
@@ -152,7 +150,7 @@ public class ProductService(DataContext context,
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting product");
+            Log.Error("Error in GetProductById");
             return new Responce<GetProductDto>(HttpStatusCode.InternalServerError,e.Message);
         }
     }
@@ -161,7 +159,7 @@ public class ProductService(DataContext context,
     {
         try
         {
-            logger.LogInformation("Getting products");
+            Log.Information("Getting products");
             var query = context.Products.AsQueryable();
             if (filter.Id.HasValue)
             {
@@ -225,7 +223,7 @@ public class ProductService(DataContext context,
         }
         catch (Exception e)
         {
-            logger.LogError("Error getting products");
+            Log.Error("Error in GetProducts");
             return new PaginationResponce<List<GetProductDto>>(HttpStatusCode.InternalServerError,e.Message);
         }
     }

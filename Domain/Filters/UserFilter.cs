@@ -2,7 +2,7 @@
 
 namespace Domain.Filters;
 
-public class UserFilter:BaseFilter
+public class UserFilter : BaseFilter
 {
     public string? FullName { get; set; } 
     public string? Address { get; set; }

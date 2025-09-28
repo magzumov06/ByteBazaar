@@ -10,6 +10,20 @@ namespace WebApp.Controllers;
 [Route("api/[controller]")]
 public class UserController(IUserService service) :Controller
 {
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateUserDto dto)
+    {
+        var res = await service.UpdateUser(dto);
+        return Ok(res);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var res = await service.GetUser(id);
+        return Ok(res);
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery] UserFilter filter)
     {

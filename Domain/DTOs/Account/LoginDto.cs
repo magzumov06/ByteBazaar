@@ -1,7 +1,10 @@
-﻿namespace Domain.DTOs.Account;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.DTOs.Account;
 
 public class LoginDto
 {
-    public string UserName { get; set; }
-    public string Password { get; set; }
+    [Required]
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
 }

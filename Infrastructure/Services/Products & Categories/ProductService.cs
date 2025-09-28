@@ -68,7 +68,7 @@ public class ProductService(DataContext context,
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
             if (update.ImageUrl != null)
             {
-                await file.DeleteFile(product?.ImageUrl!);
+                await file.DeleteFile(product.ImageUrl);
             }
             product.Name = update.Name;
             product.Description = update.Description;

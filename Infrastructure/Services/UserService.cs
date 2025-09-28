@@ -2,15 +2,86 @@
 using Domain.DTOs.UserDto;
 using Domain.Entities;
 using Domain.Filters;
+using Domain.Responces;
 using Infrastructure.Data;
+using Infrastructure.FileStorage;
 using Infrastructure.Interfaces;
 using Infrastructure.Responces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
-public class UserService(DataContext context) : IUserService
+public class UserService(DataContext context,
+    IFileStorage file) : IUserService
 {
+    public async Task<Responce<string>> UpdateUser(UpdateUserDto user)
+    {
+        try
+        {
+            var update = await context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
+            if(update == null) return new Responce<string>(HttpStatusCode.NotFound, "User not found");
+            if(user.AvatarUrl != null){await file.DeleteFile(update.AvatarUrl);}
+            update.FullName = user.FullName;
+            update.Email = user.Email;
+            update.Age = user.Age;
+            update.Address = user.Address;
+            update.PhoneNumber = user.PhoneNumber;
+            update.AvatarUrl = await file.SaveFile(user.AvatarUrl!,"image");
+            var res = await context.SaveChangesAsync();
+            return res > 0
+                ? new Responce<string>(HttpStatusCode.OK, "User successfully updated")
+                : new Responce<string>(HttpStatusCode.NotFound, "User not update");
+        }
+        catch (Exception e)
+        {
+            return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
+        }
+    }
+
+    public async Task<Responce<string>> DeleteUser(int id)
+    {
+        try
+        {
+            var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if(user == null) return new Responce<string>(HttpStatusCode.NotFound, "User not found");
+            user.IsDeleted = true;
+            var res = await context.SaveChangesAsync();
+            return res > 0
+                ? new Responce<string>(HttpStatusCode.OK, "User successfully deleted")
+                : new Responce<string>(HttpStatusCode.NotFound, "User not deleted");
+        }
+        catch (Exception e)
+        {
+            return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
+        }
+    }
+
+    public async Task<Responce<GetUserDto>> GetUser(int id)
+    {
+        try
+        {
+            var get =  await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if(get == null) return new Responce<GetUserDto>(HttpStatusCode.NotFound, "User not found");
+            var dto = new GetUserDto()
+            {
+                Id = get.Id,
+                FullName = get.FullName,
+                Email = get.Email,
+                Age = get.Age,
+                Address = get.Address,
+                PhoneNumber = get.PhoneNumber,
+                AvatarUrl = get.AvatarUrl,
+                CreatedAt = get.CreatedAt,
+                UpdatedAt = get.UpdatedAt
+            };
+            return new Responce<GetUserDto>(dto);
+        }
+        catch (Exception e)
+        {
+            return new Responce<GetUserDto>(HttpStatusCode.InternalServerError, e.Message);
+        }
+    }
+
     public async Task<PaginationResponce<List<GetUserDto>>> GetUsers(UserFilter filter)
     {
         try

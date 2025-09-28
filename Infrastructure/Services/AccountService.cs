@@ -54,7 +54,7 @@ namespace Infrastructure.Services
                     To = user.Email,
                     Subject = "Welcome to the ByteBazaar",
                     Body =
-                        $"<p>Salom {user.FullName}!</p><br> Your Password:{password}</p>"
+                        $"<p>Салом {user.FullName}!</p><br>Логини шумо {user.UserName}<br>Пароли шумо:{password}</p>"
                 });
                 return new Responce<string>("Customer created and email sent");
 

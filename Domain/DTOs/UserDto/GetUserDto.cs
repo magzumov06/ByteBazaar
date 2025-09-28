@@ -11,11 +11,9 @@ public class GetUserDto
     public int Age { get; set; }
     public string Address { get; set; }
     public string Email { get; set; }
-    [Phone] 
     public string PhoneNumber { get; set; }
     public Role Role { get; set; }
     public string AvatarUrl { get; set; }
-    public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

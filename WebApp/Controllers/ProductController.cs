@@ -21,7 +21,7 @@ public class ProductController(IProductService service):ControllerBase
 
     [HttpPut]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateProduct(UpdateProductDto product)
+    public async Task<IActionResult> UpdateProduct([FromForm]UpdateProductDto product)
     {
         var res = await service.UpdateProduct(product);
         return Ok(res);

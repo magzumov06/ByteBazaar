@@ -12,7 +12,7 @@ namespace WebApp.Controllers;
 public class UserController(IUserService service) : Controller
 {
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateUserDto dto)
+    public async Task<IActionResult> Update([FromForm]UpdateUserDto dto)
     {
         var res = await service.UpdateUser(dto);
         return Ok(res);

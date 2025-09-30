@@ -64,16 +64,20 @@ public class ProductService(DataContext context,
             Log.Information("Updating a new product");
             var product = await context.Products.FirstOrDefaultAsync(x=> x.Id == update.Id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound,"Product not found");
-            if (update.ImageUrl != null)
-            {
-                await file.DeleteFile(product.ImageUrl);
-            }
             product.Name = update.Name;
             product.Description = update.Description;
             product.Price = update.Price;
             product.Quantity = update.Quantity;
             product.CategoryId = update.CategoryId;
-            product.ImageUrl = await file.SaveFile(update.ImageUrl!,"Image");
+            
+            if (update.ImageUrl != null)
+            {
+                if (!string.IsNullOrEmpty(product.ImageUrl))
+                {
+                    await file.DeleteFile(product.ImageUrl);
+                }
+                product.ImageUrl = await file.SaveFile(update.ImageUrl, "Image");
+            }
             product.UpdatedAt = DateTime.UtcNow;
             var res = await context.SaveChangesAsync();
             if (res > 0)

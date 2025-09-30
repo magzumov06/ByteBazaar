@@ -18,9 +18,10 @@ public class OrderService(DataContext context): IOrderService
         try
         {
             Log.Information("Creating order");
-            var cartItem =  context.CartItems
-                .Where(c => c.UserId == create.UserId);
-            if(!cartItem.Any()) return new Responce<string>(HttpStatusCode.BadRequest,"CartItems not found");
+            var cartItems = await context.CartItems
+                .Where(c => c.UserId == create.UserId)
+                .ToListAsync();
+            if(!cartItems.Any()) return new Responce<string>(HttpStatusCode.BadRequest,"CartItems not found");
             var order = new Order()
             {
                 UserId = create.UserId,
@@ -28,8 +29,33 @@ public class OrderService(DataContext context): IOrderService
                 Status = create.Status,
                 Address = create.Address,
                 PaymentMethod = create.PaymentMethod,
+                TotalAmount = 0m, 
             };
             await context.Orders.AddAsync(order);
+            await context.SaveChangesAsync(); 
+
+            var totalAmount = 0m;
+            foreach (var cartItem in cartItems)
+            {
+                var product = await context.Products.FirstOrDefaultAsync(p => p.Id == cartItem.ProductId);
+                if (product != null)
+                {
+                    var orderItem = new OrderItem()
+                    {
+                        OrderId = order.Id,
+                        ProductId = cartItem.ProductId,
+                        Quantity = cartItem.Quantity,
+                        Price = product.Price * cartItem.Quantity,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                    };
+                    await context.OrderItems.AddAsync(orderItem);
+                    totalAmount += orderItem.Price;
+                }
+            }
+            order.TotalAmount = totalAmount;
+            context.CartItems.RemoveRange(cartItems);
+            
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
@@ -116,7 +142,11 @@ public class OrderService(DataContext context): IOrderService
 
             var total = await query.CountAsync();
             var skip = (filter.PageNumber -1) * filter.PageSize;
-            var orders = await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+            var orders = await query
+                .Include(o => o.OrderItems)
+                .Skip(skip)
+                .Take(filter.PageSize)
+                .ToListAsync();
             if(orders.Count == 0) return new PaginationResponce<List<GetOrderDto>>(HttpStatusCode.NotFound,"Order not found");
             var dtos = orders.Select(x=>  new GetOrderDto()
             {
@@ -124,7 +154,7 @@ public class OrderService(DataContext context): IOrderService
                 Address = x.Address,
                 PaymentMethod = x.PaymentMethod,
                 Status = x.Status,
-                TotalAmount = x.TotalAmount,
+                TotalAmount = x.OrderItems.Sum(oi => oi.Price),
                 OrderItems = x.OrderItems.Select(oi => new OrderItemFilter()
                 {
                     ProductId = oi.ProductId,

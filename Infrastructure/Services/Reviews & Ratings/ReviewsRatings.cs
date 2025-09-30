@@ -80,7 +80,24 @@ public class ReviewsRatings(DataContext context) : IReviewsRatings
             Log.Information("Updating review");
             var  review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId == dto.UserId && x.ProductId == dto.ProductId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
+            
+            var oldRating = review.Rating;
             review.Comment = dto.Comment;
+            review.Rating = dto.Rating;
+            review.UpdatedAt = DateTime.UtcNow;
+            
+            if (oldRating != dto.Rating)
+            {
+                var product = await context.Products.FirstOrDefaultAsync(x => x.Id == dto.ProductId);
+                if (product != null)
+                {
+                    var average = await context.Reviews
+                        .Where(r => r.ProductId == product.Id)
+                        .AverageAsync(x => x.Rating);
+                    product.AverageRating = average;
+                }
+            }
+            
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {
@@ -101,13 +118,31 @@ public class ReviewsRatings(DataContext context) : IReviewsRatings
         }
     }
 
-    public async Task<Responce<string>> DeleteReview(int userId)
+    public async Task<Responce<string>> DeleteReview(int reviewId)
     {
         try
         {
             Log.Information("Deleting review");
-            var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId ==  userId);
+            var review = await context.Reviews.FirstOrDefaultAsync(x => x.Id == reviewId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
+            
+            var product = await context.Products.FirstOrDefaultAsync(x => x.Id == review.ProductId);
+            if (product != null)
+            {
+                product.RatingCount -= 1;
+                if (product.RatingCount > 0)
+                {
+                    var average = await context.Reviews
+                        .Where(r => r.ProductId == product.Id)
+                        .AverageAsync(x => x.Rating);
+                    product.AverageRating = average;
+                }
+                else
+                {
+                    product.AverageRating = 0;
+                }
+            }
+            
             context.Reviews.Remove(review);
             var res = await context.SaveChangesAsync();
             if (res > 0)

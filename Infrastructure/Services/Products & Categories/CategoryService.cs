@@ -5,13 +5,52 @@ using Domain.Responces;
 using Infrastructure.Data; 
 using Infrastructure.Interfaces.IProducts___ICategories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Infrastructure.Services.Products___Categories;
 
 public class CategoryService(DataContext context) : ICategoryService
 {
+    public async Task<Responce<string>> UpdateCategory(UpdateCategoryDto dto)
+    {
+        try
+        {
+            Log.Information("Updating Category");
+            var update = await context.Categories.FirstOrDefaultAsync(c => c.Id == dto.Id);
+            if(update ==  null) return new Responce<string>(HttpStatusCode.NotFound,"Category not found");
+            update.Name = dto.Name;
+            var res = await context.SaveChangesAsync();
+            return res > 0
+                ? new Responce<string>(HttpStatusCode.OK,"Category updated")
+                : new Responce<string>(HttpStatusCode.NotFound,"Category not found");
+        }
+        catch (Exception e)
+        {
+            Log.Error("Error updating Category");
+            return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
+        }
+    }
+
+    public async Task<Responce<string>> DeleteCategory(int id)
+    {
+        try
+        {
+            Log.Information("Deleting Category");
+            var delete = await context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            if(delete == null) return new Responce<string>(HttpStatusCode.NotFound,"Category not found");
+            context.Categories.Remove(delete);
+            var res = await context.SaveChangesAsync();
+            return res > 0
+                ? new Responce<string>(HttpStatusCode.OK,"Category deleted")
+                : new Responce<string>(HttpStatusCode.NotFound,"Category not found");
+        }
+        catch (Exception e)
+        {
+            Log.Error("Error deleting Category");
+            return new Responce<string>(HttpStatusCode.InternalServerError, e.Message);
+        }
+    }
+
     public async Task<Responce<string>> CreateCategory(CreateCategoryDto category)
     {
         try

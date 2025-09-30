@@ -1,6 +1,7 @@
 ﻿using Domain.DTOs.CartItemDto;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
@@ -10,6 +11,7 @@ namespace WebApp.Controllers;
 public class CartController(ICartService service):Controller
 {
     [HttpPost]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> AddCartItem(CreateCartItemDto dto)
     {
         var res = await service.AddToCart(dto);
@@ -17,6 +19,7 @@ public class CartController(ICartService service):Controller
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> UpdateCartItem(UpdateCartItemDto dto)
     {
         var res = await service.UpdateCart(dto);
@@ -24,16 +27,18 @@ public class CartController(ICartService service):Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteCart(int Id)
+    [Authorize(Roles = "Admin,Customer")]
+    public async Task<IActionResult> DeleteCart(int id)
     {
-        var res = await service.DeleteCart(Id);
+        var res = await service.DeleteCart(id);
         return Ok(res);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetCart(int UserId)
+    [Authorize(Roles = "Admin,Customer")]
+    public async Task<IActionResult> GetCart(int userId)
     {
-        var res = await service.GetCartItem(UserId);
+        var res = await service.GetCartItem(userId);
         return Ok(res);
     }
 }

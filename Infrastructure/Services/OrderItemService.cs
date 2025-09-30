@@ -18,12 +18,13 @@ public class OrderItemService(DataContext context) : IOrderItemService
         {
             Log.Information("Creating order item");
             var product = await context.Products.FirstOrDefaultAsync(x => x.Id == dto.ProductId);
+            var cartitem = await context.CartItems.FirstOrDefaultAsync(x => x.ProductId == product!.Id);
             if (product == null) return new Responce<string>(HttpStatusCode.NotFound, "Product not found");
             var newOrderItem = new OrderItem()
             {
                 OrderId = dto.OrderId,
                 ProductId = dto.ProductId,
-                Price = product.Price,
+                Price = product.Price * cartitem!.Quantity,
                 Quantity = dto.Quantity,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,

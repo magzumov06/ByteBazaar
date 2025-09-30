@@ -11,7 +11,7 @@ namespace WebApp.Controllers;
 public class OrderController(IOrderService service): Controller
 {
     [HttpPost]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> CreateOrder( CreateOrderDto create)
     {
         var res =  await service.CreateOrder(create);
@@ -19,7 +19,7 @@ public class OrderController(IOrderService service): Controller
     }
     
     [HttpPut]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> UpdateOrder(UpdateOrderDto dto)
     {
         var res = await service.UpdateStatusOrder(dto);
@@ -27,7 +27,7 @@ public class OrderController(IOrderService service): Controller
     }
     
     [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> GetOrders([FromQuery]OrderFilter filter)
     {
         var res =  await service.GetOrders(filter);
@@ -35,6 +35,7 @@ public class OrderController(IOrderService service): Controller
     }
 
     [HttpGet("api/User/{GetUser}")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> GetOrders(int userId)
     {
         var res = await service.GetOrdersByUserId(userId);
@@ -42,6 +43,7 @@ public class OrderController(IOrderService service): Controller
     }
 
     [HttpGet("api/orders/ById")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> GetOrder(int id)
     {
         var res = await service.GetOrderById(id);

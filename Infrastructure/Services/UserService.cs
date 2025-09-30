@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Domain.DTOs.UserDto;
-using Domain.Entities;
 using Domain.Filters;
 using Domain.Responces;
 using Infrastructure.Data;
@@ -21,13 +20,19 @@ public class UserService(DataContext context,
             Log.Information("Updating user");
             var update = await context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
             if(update == null) return new Responce<string>(HttpStatusCode.NotFound, "User not found");
-            if(user.AvatarUrl != null){await file.DeleteFile(update.AvatarUrl);}
+            if (user.AvatarUrl != null)
+            {
+                if (!string.IsNullOrEmpty(update.AvatarUrl))
+                {
+                    await file.DeleteFile(update.AvatarUrl);
+                }
+                await file.SaveFile(user.AvatarUrl, "UserAvatar");
+            }
             update.FullName = user.FullName;
             update.Email = user.Email;
             update.Age = user.Age;
             update.Address = user.Address;
             update.PhoneNumber = user.PhoneNumber;
-            update.AvatarUrl = await file.SaveFile(user.AvatarUrl!,"image");
             var res = await context.SaveChangesAsync();
             if (res > 0)
             {

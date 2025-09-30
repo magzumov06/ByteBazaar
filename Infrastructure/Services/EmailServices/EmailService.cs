@@ -2,7 +2,6 @@
 using Infrastructure.Helpers;
 using Microsoft.Extensions.Options;
 
-
 namespace Infrastructure.Services.EmailServices;
 
 public class EmailService(IOptions<EmailSettings> options):IEmailService

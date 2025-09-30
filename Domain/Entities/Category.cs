@@ -8,6 +8,5 @@ public class Category:BaseEntities
     [Required]
     [MinLength(3 , ErrorMessage = "Name minimum length is 3")]
     public required string Name { get; set; }
-    public int? ParentCategoryId { get; set; }
     public List<Product>? Products { get; set; }
 }

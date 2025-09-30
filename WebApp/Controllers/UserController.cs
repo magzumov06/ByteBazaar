@@ -12,6 +12,7 @@ namespace WebApp.Controllers;
 public class UserController(IUserService service) : Controller
 {
     [HttpPut]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update([FromForm]UpdateUserDto dto)
     {
         var res = await service.UpdateUser(dto);

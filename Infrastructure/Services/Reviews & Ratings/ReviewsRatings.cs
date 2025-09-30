@@ -5,8 +5,7 @@ using Domain.Enums;
 using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces.Reviews___Ratings; 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore; 
 using Serilog;
 
 namespace Infrastructure.Services.Reviews___Ratings;
@@ -30,10 +29,10 @@ public class ReviewsRatings(DataContext context) : IReviewsRatings
             var comment = await context.Reviews.FirstOrDefaultAsync(x=>x.UserId == dto.UserId && x.ProductId == dto.ProductId);
             if (comment != null)
             {
-                return new Responce<string>(HttpStatusCode.BadRequest,
+                return new Responce<string>(HttpStatusCode.BadRequest, 
                     "Шумо алакай ба ин маҳсулот шарҳ гузоштаед!");
             }
-
+            
             var review = new Review()
             {
                 UserId = dto.UserId,
@@ -101,12 +100,12 @@ public class ReviewsRatings(DataContext context) : IReviewsRatings
         }
     }
 
-    public async Task<Responce<string>> DeleteReview(int userId)
+    public async Task<Responce<string>> DeleteReview(int reviewId)
     {
         try
         {
             Log.Information("Deleting review");
-            var review = await context.Reviews.FirstOrDefaultAsync(x => x.UserId ==  userId);
+            var review = await context.Reviews.FirstOrDefaultAsync(x => x.Id ==  reviewId);
             if (review == null) return new Responce<string>(HttpStatusCode.NotFound,"Review not found");
             context.Reviews.Remove(review);
             var res = await context.SaveChangesAsync();

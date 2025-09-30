@@ -1,6 +1,7 @@
 ﻿using Domain.DTOs.OrderItemDto;
 using Domain.Filters;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
@@ -11,6 +12,7 @@ namespace WebApp.Controllers;
 public class OrderItemController(IOrderItemService service) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> Create(CreateOrderItemDto dto)
     {
         var res =  await service.CreateOrderItem(dto);
@@ -18,6 +20,7 @@ public class OrderItemController(IOrderItemService service) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> Update(UpdateOrderItemDto dto)
     {
         var res = await service.UpdateOrderItem(dto);
@@ -25,6 +28,7 @@ public class OrderItemController(IOrderItemService service) : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> Delete(int id)
     {
         var res = await service.DeleteOrderItem(id);
@@ -32,6 +36,7 @@ public class OrderItemController(IOrderItemService service) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> Get(int id)
     {
         var res = await service.GetOrderItemById(id);
@@ -39,6 +44,7 @@ public class OrderItemController(IOrderItemService service) : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> Get([FromQuery] OrderItemFilter filter)
     {
         var res = await service.GetOrderItems(filter);

@@ -6,7 +6,6 @@ using Domain.Responces;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Infrastructure.Services;

@@ -9,6 +9,7 @@ namespace WebApp.Controllers;
 public class ReviewsController(IReviewsRatings service): Controller
 {
     [HttpPost]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> CreateReview(CreateReviewDto dto)
     {
         var res = await service.AddReview(dto);
@@ -16,6 +17,7 @@ public class ReviewsController(IReviewsRatings service): Controller
     }
 
     [HttpPut]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> UpdateReview(UpdateReviewDto dto)
     {
         var res = await service.UpdateReview(dto);
@@ -23,13 +25,15 @@ public class ReviewsController(IReviewsRatings service): Controller
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteReview(int userId)
+    [Authorize(Roles = "Admin,Customer")]
+    public async Task<IActionResult> DeleteReview(int reviewId)
     {
-        var res = await service.DeleteReview(userId);
+        var res = await service.DeleteReview(reviewId);
         return Ok(res);
     }
     
     [HttpGet("{my-reviews}")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> GetReviews(int userId)
     {
         var res = await service.GetReviews(userId);
@@ -37,6 +41,7 @@ public class ReviewsController(IReviewsRatings service): Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<IActionResult> GetAllReviews()
     {
         var res = await service.GetAllReviews();

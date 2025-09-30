@@ -43,7 +43,7 @@ namespace Infrastructure.Services
                 };
                 if (register.ProfileImage != null)
                 {
-                    user.AvatarUrl = await file.SaveFile(register.ProfileImage, "Image");
+                    user.AvatarUrl = await file.SaveFile(register.ProfileImage, "UserAvatar");
                 }
                 var password = PasswordUtil.GenerateRandomPassword();
                 var result = await userManager.CreateAsync(user, password);

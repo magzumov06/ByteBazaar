@@ -1,6 +1,5 @@
 ﻿using Domain.DTOs.ProductDto;
-using Domain.Filters;
-using Infrastructure.Interfaces;
+using Domain.Filters; 
 using Infrastructure.Interfaces.IProducts___ICategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +28,9 @@ public class ProductController(IProductService service):ControllerBase
 
     [HttpDelete]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteProduct(int Id)
+    public async Task<IActionResult> DeleteProduct(int id)
     {
-        var res = await service.DeleteProduct(Id);
+        var res = await service.DeleteProduct(id);
         return Ok(res);
     }
 
